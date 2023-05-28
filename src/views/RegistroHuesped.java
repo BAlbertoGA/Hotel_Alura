@@ -10,7 +10,6 @@ import com.toedter.calendar.JDateChooser;
 
 import jdbc.controller.HuespedesController;
 import jdbc.controller.ReservasController;
-import jdbc.modelo.Huespedes;
 
 import javax.swing.JComboBox;
 import javax.swing.DefaultComboBoxModel;
@@ -266,14 +265,6 @@ public class RegistroHuesped extends JFrame {
 		btnguardar.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				if (txtNombre.getText() != null && txtApellido.getText() != null) {
-					guardarHuesped();
-					Exito exito = new Exito();
-					exito.setVisible(true);
-					dispose();
-				} else {
-					JOptionPane.showMessageDialog(null, "Campos requeridos");
-				}
 			}
 		});
 		btnguardar.setLayout(null);
@@ -335,22 +326,6 @@ public class RegistroHuesped extends JFrame {
 		labelExit.setForeground(SystemColor.black);
 		labelExit.setFont(new Font("Roboto", Font.PLAIN, 18));
 	}
-	
-	public void guardarHuesped() {
-		String FechaN = ((JTextField)txtFechaN.getDateEditor().getUiComponent()).getText();
-		String nombre = txtNombre.getText();
-		String apellido = txtApellido.getText();
-		String telefono = txtTelefono.getText();
-		Integer idReserva = Integer.valueOf(txtNreserva.getText());
-		
-		Huespedes huespedes = new Huespedes(nombre, 
-				apellido, 
-				java.sql.Date.valueOf(FechaN), 
-				txtNacionalidad.getSelectedItem().toString(), 
-				telefono);
-		huespedesController.guardar(huespedes, idReserva);
-	}
-	
 	
 	
 

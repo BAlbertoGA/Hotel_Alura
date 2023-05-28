@@ -312,9 +312,9 @@ public class ReservasView extends JFrame {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				if (ReservasView.txtFechaEntrada.getDate() != null && ReservasView.txtFechaSalida.getDate() != null) {
-					RegistroHuesped registro = new RegistroHuesped(guardarReserva());
+					guardarReserva();
+					RegistroHuesped registro = new RegistroHuesped(0);
 					registro.setVisible(true);
-					dispose();
 				} else {
 					JOptionPane.showMessageDialog(null, "Debes llenar todos los campos.");
 				}
@@ -335,14 +335,31 @@ public class ReservasView extends JFrame {
 
 
 	}
-	int valor = 0;
-	public void calcularValor(JDateChooser fechaEntrada, JDateChooser fechaSalida) {
+	
+	private void guardarReserva() {
+		 String FechaE=((JTextField)txtFechaEntrada.getDateEditor().getUiComponent()).getText();
+		 String FechaS=((JTextField)txtFechaSalida.getDateEditor().getUiComponent()).getText();
+		 
+		 Reserva nuevaReserva = new Reserva(java.sql.Date.valueOf(FechaE),
+				 java.sql.Date.valueOf(FechaS),
+				 txtValor.getText(),
+				 txtFormaPago.getSelectedItem().toString());
+		 reservasController.guardar(nuevaReserva);
+		 
+		 JOptionPane.showMessageDialog(contentPane, "Reserva guardada con exito, id: " + nuevaReserva.getId());
+		 
+		 RegistroHuesped registroHuesped = new RegistroHuesped(nuevaReserva.getId());
+		 
+	}
+	
+	
+	private void calcularValor(JDateChooser fechaEntrada, JDateChooser fechaSalida) {
 		if (fechaEntrada.getDate() != null && fechaSalida.getDate() != null) {
 			Calendar inicio = fechaEntrada.getCalendar();
 			Calendar fin = fechaSalida.getCalendar();
 			int dias = -1; // Usamos -1 para contar a partir del dia siguiente
 			int tarifa = 650;
-			valor = 0;
+			int valor;
 			
 			while (inicio.before(fin) || inicio.equals(fin)) {
 				dias++;
@@ -350,23 +367,8 @@ public class ReservasView extends JFrame {
 			}
 			valor = dias * tarifa;
 			String valorTotal = Integer.toString(valor);
-			txtValor.setText(valorTotal);
+			txtValor.setText("$ " + valorTotal);
 		}
-	}
-	
-	private int guardarReserva() {
-		 String FechaE=((JTextField)txtFechaEntrada.getDateEditor().getUiComponent()).getText();
-		 String FechaS=((JTextField)txtFechaSalida.getDateEditor().getUiComponent()).getText();
-		 
-		 Reserva nuevaReserva = new Reserva(java.sql.Date.valueOf(FechaE),
-				 java.sql.Date.valueOf(FechaS),
-				 valor,
-				 txtFormaPago.getSelectedItem().toString());
-		 reservasController.guardar(nuevaReserva);
-		 
-		 JOptionPane.showMessageDialog(contentPane, "Reserva guardada con exito, id: " + nuevaReserva.getId());
-		 
-		 return nuevaReserva.getId();
 	}
 		
 	//Código que permite mover la ventana por la pantalla según la posición de "x" y "y"	

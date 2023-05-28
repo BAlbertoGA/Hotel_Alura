@@ -6,10 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.List;
 
-import jdbc.factory.ConnectionFactory;
 import jdbc.modelo.Huespedes;
 import jdbc.modelo.Reserva;
 
@@ -28,7 +25,7 @@ public class HuespedDAO {
 			PreparedStatement preparedStatement;
 			// String nombre, String apellido, Date fechaNacimiento, String nacionalidad, String telefono
 			preparedStatement = connection.prepareStatement(
-					"INSERT INTO huespedes"
+					"INSERT INTO reservas"
 						+ "(nombre, apellido, fecha_nacimiento, nacionalidad, telefono, reserva_id)"
 						+ "VALUES (?, ?, ?, ?, ? ,?)",
 						Statement.RETURN_GENERATED_KEYS);
@@ -54,40 +51,6 @@ public class HuespedDAO {
 			
 			
 			
-		} catch (SQLException e) {
-			throw new RuntimeException(e);
-		}
-	}
-	
-	
-	public List<Huespedes> listar() {
-		List<Huespedes> resultado = new ArrayList<>();
-		
-		ConnectionFactory factory = new ConnectionFactory();
-		final Connection con = factory.recuperaConexion();
-		
-		try (con) {
-			final PreparedStatement statement = con
-					.prepareStatement("SELECT ID, NOMBRE, APELLIDO, FECHA_NACIMIENTO, NACIONALIDAD, TELEFONO, RESERVA_ID FROM HUESPEDES");
-			try (statement){
-				statement.execute();
-				
-				final ResultSet resultSet = statement.getResultSet();
-				
-				try (resultSet) {
-					while (resultSet.next()) {
-						Huespedes fila = new Huespedes(resultSet.getInt("ID"), 
-								resultSet.getString("NOMBRE"),
-								resultSet.getString("APELLIDO"),
-								resultSet.getDate("FECHA_NACIMIENTO"), 
-								resultSet.getString("NACIONALIDAD"),
-								resultSet.getString("TELEFONO"),
-								resultSet.getInt("RESERVA_ID"));
-						resultado.add(fila);
-					}
-				}
-			}
-			return resultado;
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}

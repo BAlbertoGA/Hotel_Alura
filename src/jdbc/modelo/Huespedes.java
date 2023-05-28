@@ -29,16 +29,6 @@ public class Huespedes {
 		this.telefono = telefono;
 	}
 	
-	public Huespedes (Integer id, String nombre, String apellido, Date fechaNacimiento, String nacionalidad, String telefono, Integer reservaId) {
-		this.id = id;
-		this.nombre = nombre;
-		this.apellido = apellido;
-		this.fechaNacimiento = fechaNacimiento;
-		this.nacionalidad = nacionalidad;
-		this.telefono = telefono;
-		this.reservaId = reservaId;
-	}
-	
 
 	public void setId(Integer id) {
 		this.id = id;

@@ -6,14 +6,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
-
-import com.toedter.calendar.JDateChooser;
-
-import jdbc.controller.HuespedesController;
-import jdbc.controller.ReservasController;
-import jdbc.modelo.Huespedes;
-import jdbc.modelo.Reserva;
-
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JButton;
@@ -21,13 +13,9 @@ import javax.swing.ImageIcon;
 import java.awt.Color;
 import java.awt.SystemColor;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-
 import java.awt.Font;
 import java.awt.event.ActionListener;
-import java.util.Calendar;
 import java.util.List;
-import java.util.Optional;
 import java.awt.event.ActionEvent;
 import javax.swing.JTabbedPane;
 import java.awt.Toolkit;
@@ -37,8 +25,6 @@ import javax.swing.ListSelectionModel;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
-import java.sql.Date;
-import java.sql.SQLException;
 
 @SuppressWarnings("serial")
 public class Busqueda extends JFrame {
@@ -52,13 +38,7 @@ public class Busqueda extends JFrame {
 	private JLabel labelAtras;
 	private JLabel labelExit;
 	int xMouse, yMouse;
-	
-	private ReservasController reservasController;
-	private HuespedesController huespedesController;
-	private ReservasView reservasView;
-	String reserva;
-	String huespedes;
-	
+
 	/**
 	 * Launch the application.
 	 */
@@ -79,10 +59,6 @@ public class Busqueda extends JFrame {
 	 * Create the frame.
 	 */
 	public Busqueda() {
-		this.reservasView = new ReservasView();
-		this.reservasController = new ReservasController();
-		this.huespedesController = new HuespedesController();
-		
 		setIconImage(Toolkit.getDefaultToolkit().getImage(Busqueda.class.getResource("/imagenes/lupa2.png")));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 910, 571);
@@ -128,8 +104,6 @@ public class Busqueda extends JFrame {
 		JScrollPane scroll_table = new JScrollPane(tbReservas);
 		panel.addTab("Reservas", new ImageIcon(Busqueda.class.getResource("/imagenes/reservado.png")), scroll_table, null);
 		scroll_table.setVisible(true);
-		tbReservas.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
-		MostrarTablaReservas();
 		
 		
 		tbHuespedes = new JTable();
@@ -146,7 +120,6 @@ public class Busqueda extends JFrame {
 		JScrollPane scroll_tableHuespedes = new JScrollPane(tbHuespedes);
 		panel.addTab("Huéspedes", new ImageIcon(Busqueda.class.getResource("/imagenes/pessoas.png")), scroll_tableHuespedes, null);
 		scroll_tableHuespedes.setVisible(true);
-		MostrarTablaHuespedes();
 		
 		JLabel lblNewLabel_2 = new JLabel("");
 		lblNewLabel_2.setIcon(new ImageIcon(Busqueda.class.getResource("/imagenes/Ha-100px.png")));
@@ -260,8 +233,6 @@ public class Busqueda extends JFrame {
 		lblBuscar.setFont(new Font("Roboto", Font.PLAIN, 18));
 		
 		JPanel btnEditar = new JPanel();
-		btnEditar.addMouseListener(new MouseAdapter() {
-		});
 		btnEditar.setLayout(null);
 		btnEditar.setBackground(new Color(12, 138, 199));
 		btnEditar.setBounds(635, 508, 122, 35);
@@ -276,52 +247,6 @@ public class Busqueda extends JFrame {
 		btnEditar.add(lblEditar);
 		
 		JPanel btnEliminar = new JPanel();
-		btnEliminar.addMouseListener(new MouseAdapter() {
-			public void mouseClicked (MouseEvent e) {
-				int filaReservas = tbReservas.getSelectedRow();
-				int filaHuespedes = tbHuespedes.getSelectedRow();
-				
-				if(filaReservas >= 0) {
-					reserva = tbReservas.getValueAt(filaReservas, 0).toString();
-					int confirmar = JOptionPane.showConfirmDialog(null, "Desea borrar la reserva?");
-					if (confirmar == JOptionPane.YES_OPTION) {
-						String valor = tbReservas.getValueAt(filaReservas, 0).toString();
-						try {
-							reservasController.eliminar(Integer.valueOf(valor));
-						} catch (NumberFormatException e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
-						} catch (SQLException e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
-						}
-						JOptionPane.showMessageDialog(contentPane, "Registro eliminado con exito!");
-						limpiarTabla();
-						MostrarTablaReservas();	
-					}
-				}else 
-					if(filaHuespedes >= 0) {
-					huespedes = tbHuespedes.getValueAt(filaHuespedes, 0).toString();
-					int confirmar = JOptionPane.showConfirmDialog(null, "Desea borrar el Huésped?");
-					if (confirmar == JOptionPane.YES_OPTION) {
-						String valor = tbHuespedes.getValueAt(filaHuespedes, 0).toString();
-						try {
-							huespedesController.eliminar(Integer.valueOf(valor));
-						} catch (NumberFormatException e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
-						} catch (SQLException e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
-						}
-						JOptionPane.showMessageDialog(contentPane, "Huésped eliminado con exito!");
-						limpiarTabla();
-						MostrarTablaHuespedes();
-					}
-				}
-			}
-		
-		});
 		btnEliminar.setLayout(null);
 		btnEliminar.setBackground(new Color(12, 138, 199));
 		btnEliminar.setBounds(767, 508, 122, 35);
@@ -335,57 +260,6 @@ public class Busqueda extends JFrame {
 		lblEliminar.setBounds(0, 0, 122, 35);
 		btnEliminar.add(lblEliminar);
 		setResizable(false);
-	}
-	
-	private List<Reserva> MostrarReservas(){
-		return this.reservasController.listar();
-	}
-	
-	private List<Huespedes> MostrarHuespedes(){
-		return this.huespedesController.listar();
-	}
-	
-	
-	public void MostrarTablaReservas() {
-		List<Reserva> reserva = MostrarReservas();
-		modelo.setRowCount(0);
-		try {
-			for(Reserva reservas : reserva ) {
-				modelo.addRow(new Object[] {
-						reservas.getId(), reservas.getFechaEntrada(), reservas.getFechaSalida(), reservas.getValor(), reservas.getFormaPago()
-				});
-			}
-		}catch(Exception e) {
-			throw e;
-		}
-	}
-	
-	private void MostrarTablaHuespedes() {
-		List<Huespedes> huesped = MostrarHuespedes();
-		modeloHuesped.setRowCount(0);
-		try {
-			for(Huespedes huespedes : huesped ) {
-				modeloHuesped.addRow(new Object[] {
-						huespedes.getId(), huespedes.getNombre(), huespedes.getApellido(), huespedes.getFechaNacimiento(), 
-						huespedes.getNacionalidad(), huespedes.getTelefono(), huespedes.getReservaId()
-				});
-			}
-		}catch(Exception e) {
-			throw e;
-		}
-	}
-
-	
-
-	
-	private Date Date(String string) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	private void limpiarTabla() {
-		((DefaultTableModel)tbHuespedes.getModel()).setRowCount(0);
-		((DefaultTableModel)tbReservas.getModel()).setRowCount(0);
 	}
 	
 //Código que permite mover la ventana por la pantalla según la posición de "x" y "y"
